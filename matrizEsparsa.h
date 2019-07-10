@@ -239,7 +239,17 @@ void imprimir(MatrizEsparsa* m)
 }
 
 // Libera toda memória alocada dinamicamente para a matriz.
-void desalocar(MatrizEsparsa* m);
+void desalocar(MatrizEsparsa* m){
+
+  Node* aux;
+  for (int i = 0; i < m->numLinhas; i++)
+    for (int j = 0; j < m->numColunas; j++){
+      aux =  acessar(m,i,j);
+      if(aux != NULL)
+        free(aux);
+    }
+}
+
 
 
 // IMPLEMENTAÇÃO
