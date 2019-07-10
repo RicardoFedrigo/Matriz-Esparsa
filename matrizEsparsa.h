@@ -57,13 +57,14 @@ MatrizEsparsa* criarMatriz(int qtdeLinhas, int qtdeColunas)
 int matriz_existe();
 Node* acessar(MatrizEsparsa* m, int linha, int coluna)
 {
-
   for( Node* i = m->colunas[coluna]; i != NULL ; i= i->baixo)
   {
     for (Node* j = m->linhas[linha] ; j != NULL ; j = j->direita)
     {
+       
       if (j == i)
       {
+         printf("HERE\n");
           return j;
       }
     }
@@ -96,6 +97,7 @@ int inserir(MatrizEsparsa* m, int linha, int coluna, int valor)
 // Coloca a linha e a coluna, poderia fazer sem esses itens, maaaaaaas ia ser um trampo um pouco mais chato
   elemento->coluna = coluna;
   elemento->linha  = linha;
+  elemento->valor =valor;
   Node* aux;
 
   
@@ -104,15 +106,17 @@ int inserir(MatrizEsparsa* m, int linha, int coluna, int valor)
     elemento->esquerda=m->linhas[linha];
   }else
   {
-    for (int i=m->numColunas ; i > 1; i--)
+    int finalColuna = m->numColunas -1;
+    for (int i= finalColuna; i > 1; i--)
     {
-     
         aux = acessar(m,linha,i);
-          printf("HERE\n");
-        if(aux->coluna < coluna)
+        if (aux != NULL)
         {
+          if(aux->coluna < coluna)
+          {
             elemento->esquerda = aux;
             break;
+          }
         }
     }
   }
@@ -125,16 +129,15 @@ int inserir(MatrizEsparsa* m, int linha, int coluna, int valor)
     for (int i=0 ; i < m->numColunas ; i++)
     {
         aux = acessar(m,linha,i);
-
-        if(aux->coluna > coluna)
-        { 
-          
-          elemento->direita=aux;
-          break;
+        if (aux != NULL)
+        {
+          if(aux->coluna > coluna)
+          { 
+            elemento->direita=aux;
+            break;
+          }
         }
     }
-
-    
   }
   if (cima<=0)
   {
@@ -143,14 +146,18 @@ int inserir(MatrizEsparsa* m, int linha, int coluna, int valor)
 
   }else
   {
-    for (int i = m->numLinhas; i > 1; i--)
+    int finallinha = (m->numLinhas) -1;
+    for (int i = finallinha; i > 1; i--)
     {
         aux= acessar(m,i,coluna);
-        if(aux->linha < linha)
+        if (aux != NULL)
         {
+          if(aux->linha < linha)
+          {
             elemento->cima = aux;
             break;
-        } 
+          }
+        }  
     }
   }
   if (baixo > m->numLinhas)
@@ -161,13 +168,16 @@ int inserir(MatrizEsparsa* m, int linha, int coluna, int valor)
   {
     for (int i = 0; i < m->numLinhas; i++)
     {
-        aux = acessar(m,i,coluna);
+      aux = acessar(m,i,coluna);
+      if (aux != NULL)
+      {
         if (aux->linha > linha)
         {
           elemento->baixo=aux;
           break;
         }
-      }  
+      }
+    }  
   }
 // PARTE DA INSERCAO
     
@@ -179,9 +189,22 @@ int inserir(MatrizEsparsa* m, int linha, int coluna, int valor)
   {
     elemento->direita->esquerda=elemento;
   }
+  if (elemento->cima==m->colunas[coluna])
+  {
+    m->colunas[coluna]=elemento;
+  }else
+  {
+    elemento->cima->baixo=elemento;
+  }
   
-  elemento->cima->baixo=elemento;
-  elemento->esquerda->direita = elemento;
+  if (elemento->esquerda == m->linhas[linha])
+  {
+    m->linhas[linha]=elemento;    
+  }else
+  {
+    elemento->esquerda->direita = elemento;
+  }
+
   return 1;
 
 }
