@@ -29,70 +29,63 @@ MatrizEsparsa* criarMatriz(int qtdeLinhas, int qtdeColunas){
 int remover(MatrizEsparsa* m, int linha, int coluna);
 
 
-int inserir(MatrizEsparsa* m, int linhap, int colunap, int valorp){
+int inserir(MatrizEsparsa* m, int linhap, int colunap, int valorp)
+{
+  
   if( linhap<0 || linhap>=m->numLinhas || colunap<0 || colunap >=m->numColunas)
     return 0;
   Node* ant = NULL;
   Node* atual = m->linhas[linhap];
-  Node* aux;
+  Node* ant_coluna = NULL;
+  Node* atual_coluna = m->colunas[colunap];
+
   while(atual != NULL && atual->coluna<colunap){
    
     ant = atual;
     atual = atual->direita;
   }
+
+  while(atual != NULL && atual->linha<linhap){
+   
+    ant_coluna = atual_coluna;
+    atual_coluna = atual_coluna->baixo;
+  }
   if(atual != NULL && atual->coluna == colunap)
   {
     if(valorp == 0)
-   {
-  //     if(ant==NULL)
-  //     { 
-  //       m->linhas[linhap] = atual->direita;
-  //     }else{
-  //       ant->direita = atual->direita;
-  //     }free(atual);
-  //    remover(m,linhap,colunap);
-    }
-     else
+    {
+
+    }else
+    {
       atual->valor = valorp;
+    }
   }
   else
-  {
-          { 
   {
       Node* novo = (Node*)malloc(sizeof(Node));
       novo->coluna = colunap;
       novo->valor = valorp;
       novo->direita = atual;
-      aux=novo;
-      if(ant == NULL){
+      novo->baixo = atual_coluna;
+      if(ant == NULL ){
         m->linhas[linhap] = novo;
       }else{
         ant->direita = novo;
       }
+      if (ant_coluna == NULL)
+      {
+        m->colunas[colunap] = novo;
+      }else
+      {
+        ant->baixo= novo;
+      }
+      
   }
 //IMPLEMENTACAO COLUNA 
 
-  Node* ant_coluna = NULL;
-  Node* atual_coluna = m->colunas[colunap];
-  while(atual_coluna != NULL && atual_coluna->linha<linhap){
-  
-    ant_coluna = atual_coluna;
-    atual_coluna = atual_coluna->baixo;
-  }
- 
-  if(ant_coluna == NULL){
-    m->colunas[colunap] = aux;
-  }else{
-    ant_coluna->baixo = atual_coluna ;
-  }
-  aux->baixo = atual_coluna;
-}
-void imprimir(MatrizEsparsa* m)
-{
 
-  for (int i = 0; i < 8; i++)
-  {
-    
-  }
-    
+  return 1;
 }
+
+int acessa(MatrizEsparsa* m, int linha, int coluna);
+void imprimir(MatrizEsparsa* m);
