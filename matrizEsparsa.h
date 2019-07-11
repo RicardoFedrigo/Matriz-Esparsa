@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//ALUNO: RICARDO FEDRIGO RA:1711725 
+//ALUNO: LUAN HENRIQUE DE CASTRO VALESE RA: 1710862
+
+
+
 typedef struct Node{
   int linha;
   int coluna;
@@ -12,31 +17,11 @@ typedef struct Node{
 }Node;
 
 typedef struct{
-  Node** linhas;	//ponteiro para o vetor cujas células são ponteiros de nós
-  Node** colunas;	//ponteiro para o vetor cujas células são ponteiros de nós
+  Node** linhas;	//ponteiro para o vetor cujas cï¿½lulas sï¿½o ponteiros de nï¿½s
+  Node** colunas;	//ponteiro para o vetor cujas cï¿½lulas sï¿½o ponteiros de nï¿½s
   int numLinhas;	//Quantidade de linhas da matriz
   int numColunas;	//Quantidade de colunas da matriz
 }MatrizEsparsa;
-
-    // FUNÇÕES PRINCIPAIS:
-
-// Cria uma matriz vazia e devolve seu endereço de memória.
-MatrizEsparsa* criarMatriz(int qtdeLinhas, int qtdeColunas);
-
-// Insere o <valor> na matriz <m> na linha <linha> e coluna <coluna>. Caso a posição já exista, substitua o valor da célula.
-int inserir(MatrizEsparsa* m, int linha, int coluna, int valor);
-
-// Devolve o valor correspondente a linha e coluna solicitada. Faça a validação dos índices. Caso a posição solicitada esteja fora do intervalo, devolva zero.
-int acessar(MatrizEsparsa* m, int linha, int coluna);
-
-//Remove o elemento da linha <linha> e coluna <coluna> na matriz <m> . Devolva 1 caso a remoção seja efetivada e 0 caso contrário.
-int remover(MatrizEsparsa* m, int linha, int coluna);
-
-// Libera toda memória alocada dinamicamente para a matriz.
-void desalocar(MatrizEsparsa* m);
-
-// Imprime os valores da matriz na tela. Cada linha deve ser impressa em uma linha diferente e os elementos separados por espaço ou tabulação. Os elementos não representados na matriz (valor zero), também devem ser impressos.
-void imprimir(MatrizEsparsa* m);
 
 Node* no_criar(int linha, int coluna, int valor){
   Node* no = (Node*) malloc(sizeof(Node));
@@ -49,6 +34,9 @@ Node* no_criar(int linha, int coluna, int valor){
   no->baixo = no;
   return no;
 }
+//Declara assinatura para nao ter warnings
+int remover(MatrizEsparsa* m, int linha, int coluna);
+
 MatrizEsparsa* criarMatriz(int qtdeLinhas, int qtdeColunas){
   MatrizEsparsa* m = (MatrizEsparsa*) malloc(sizeof(MatrizEsparsa));
   m->colunas = (Node**) malloc(qtdeColunas * sizeof(Node*));
@@ -61,7 +49,7 @@ MatrizEsparsa* criarMatriz(int qtdeLinhas, int qtdeColunas){
     m->linhas[i] = no_criar(i,0,0);
   return m;
 }
-// aqui retorna endereço da linha
+// aqui retorna endereï¿½o da linha
 Node* endLinha(Node* sentinela, int pos){
   Node* aux = sentinela;
   while(aux->direita != sentinela && pos > aux->direita->coluna){
@@ -69,7 +57,7 @@ Node* endLinha(Node* sentinela, int pos){
   }
   return aux;
 }
-// aqui retorna endereço da coluna
+// aqui retorna endereï¿½o da coluna
 Node* endColuna(Node* sentinela, int pos){
   Node* aux = sentinela;
   while(aux->baixo != sentinela && pos > aux->baixo->linha){
@@ -90,24 +78,24 @@ int verifica(MatrizEsparsa* m, int linha, int coluna, int valor){
   }
   return 0;
 }
-// parte da inserção pelo endereço da linha
+// parte da remoï¿½ï¿½o pelo endereï¿½o de linha
+void remover_linha(Node* sentinela, Node* no){
+  no->esquerda->direita = no->direita;
+  no->direita->esquerda = no->esquerda;
+}
+//parte da remoï¿½ï¿½o pelo endereï¿½o de coluna
+void remover_coluna(Node* sentinela, Node* no){
+  no->baixo->cima = no->cima;
+  no->cima->baixo = no->baixo;
+
+}
+// parte da inserï¿½ï¿½o pelo endereï¿½o da linha
 void inserir_linha(Node* sentinela, Node* no){
   Node* aux = endLinha (sentinela, no->coluna);
   no->direita = aux->direita;
   no->esquerda = aux;
   aux->direita->esquerda = no;
   aux->direita = no;
-}
-// parte da remoção pelo endereço de linha
-void remover_linha(Node* sentinela, Node* no){
-  no->esquerda->direita = no->direita;
-  no->direita->esquerda = no->esquerda;
-}
-//parte da remoção pelo endereço de coluna
-void remover_coluna(Node* sentinela, Node* no){
-  no->baixo->cima = no->cima;
-  no->cima->baixo = no->baixo;
-
 }
 // Utiliza do sentinela procurando a coluna a ser colocada
 void inserir_coluna(Node* sentinela, Node* no){
@@ -121,7 +109,7 @@ void inserir_coluna(Node* sentinela, Node* no){
 int inserir(MatrizEsparsa* m, int linha, int coluna, int valor){
   if(linha < 0 || linha > m->numLinhas ) return 0;
   if(coluna < 0 || coluna > m->numColunas ) return 0;
-  if(verifica(m,linha, coluna, valor) ) return 1;
+  if(verifica(m,linha, coluna, valor)) return 1;
 
   Node* novo = no_criar(linha, coluna, valor);
   inserir_linha(m->linhas[linha], novo);
@@ -131,11 +119,12 @@ int inserir(MatrizEsparsa* m, int linha, int coluna, int valor){
 
 //Desvincula as linhas e colunas de cada no
 void desalocar(MatrizEsparsa* m){
-  for (int i = 0 ; i<m->numLinhas ; i++)
-    free(m->linhas[i]);
-  for (int i = 0 ; i<m->numColunas ; i++)
-    free(m->colunas[i]);
-  free(m);
+  for (int i = 0 ; i<m->numLinhas ; i++){
+    for (int j = 0 ; j<m->numColunas ; j++){
+        remover(m,i,j);
+    }
+  }
+
 }
 //Funcao do professor =D
 void imprimir(MatrizEsparsa *m) {
@@ -154,7 +143,7 @@ void imprimir(MatrizEsparsa *m) {
     printf("\n ", 0);
   }
 }
-// acessa a matriz e retorna o valor do nó na linha e coluna
+// acessa a matriz e retorna o valor do nï¿½ na linha e coluna
 int acessar(MatrizEsparsa* m, int linha, int coluna) {
   if (linha < 0 || linha > m->numLinhas ) return 0;
   if (coluna < 0 || coluna > m->numColunas ) return 0;
@@ -162,7 +151,7 @@ int acessar(MatrizEsparsa* m, int linha, int coluna) {
   Node* aux = endLinha(sentinela, coluna+1);
   return aux->valor;
 }
-// acessa a matriz e retorna o nó na linha  e coluna solicitada
+// acessa a matriz e retorna o nï¿½ na linha  e coluna solicitada
 Node* acessaraux(MatrizEsparsa* m, int linha, int coluna) {
   if (linha < 0 || linha > m->numLinhas ) return 0;
   if (coluna < 0 || coluna > m->numColunas ) return 0;
@@ -174,6 +163,7 @@ Node* acessaraux(MatrizEsparsa* m, int linha, int coluna) {
 int remover(MatrizEsparsa* m, int linha, int coluna){
   if (linha < 0 || linha > m->numLinhas ) return 0;
   if (coluna < 0 || coluna > m->numColunas ) return 0;
+  if(acessar(m,linha,coluna) == 0) return 0;
 
   Node* novo = acessaraux(m, linha, coluna);
   remover_linha(m->linhas[linha], novo);

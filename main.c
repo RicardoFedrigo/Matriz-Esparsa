@@ -15,11 +15,15 @@ int main() {
   inserir(m, 9, 0, 15);
   inserir(m, 9, 9, 20);
   inserir(m, 0, 0, 20);
-  remover(m,0,0); 
-
-
-  printf("acessar %d\n",acessar(m,2,1));
-
   imprimir(m);
-
+  printf("____________________________________\n");
+  printf("remover: %d \n", remover(m,1,1));
+  printf("acessar %d\n",acessar(m,2,1));
+  remover(m,0,0); 
+  remover(m,2,2);
+  printf("____________________________________\n");
+  imprimir(m);
+  desalocar(m);
+  printf("____________________________________\n");
+  imprimir(m);
 }
