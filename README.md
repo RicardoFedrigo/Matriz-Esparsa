@@ -1,4 +1,4 @@
 # Matriz-Esparsa
 
- APS de Estrutura de dados, imcompleta 
+ APS de Estrutura de dados.
  
